@@ -1,0 +1,38 @@
+version: '2.3'
+services:
+  data:
+    image: postgres:alpine
+    restart: 'no'
+    volumes:
+      - /var/lib/postgresql
+    command: 'true'
+  database:
+    image: postgres:alpine
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - '5432:5432'
+    volumes_from:
+      - data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+  django:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    restart: always
+    links:
+      - database:database.service
+    env_file:
+      - ./.env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
