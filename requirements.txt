@@ -1,0 +1,6 @@
+Django==1.11
+psycopg2-binary
+factory-boy
+flake8
+ipdb
+ipython
