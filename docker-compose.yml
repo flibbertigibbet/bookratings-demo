@@ -23,7 +23,7 @@ services:
       start_period: 5s
   django:
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8222
     restart: always
     links:
       - database:database.service
@@ -32,7 +32,7 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8222:8222"
     depends_on:
       database:
         condition: service_healthy

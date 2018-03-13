@@ -13,5 +13,5 @@ RUN apk update && \
 
 COPY . /code/
 
-EXPOSE 8000
+EXPOSE 8222
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
