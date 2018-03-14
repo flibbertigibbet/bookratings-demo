@@ -1,13 +1,18 @@
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .forms import DUMMY_PASSWORD, RatingsUserCreationForm
+from .forms import DUMMY_PASSWORD, RatingsForm, RatingsUserCreationForm
+
+USERNAME_COOKIE = 'username'
 
 
 def index(request):
+    if USERNAME_COOKIE in request.COOKIES:
+        username = request.COOKIES[USERNAME_COOKIE]
+        user = authenticate(username=username, password=DUMMY_PASSWORD)
+        login(request, user)
     if request.user.is_authenticated():
-        return HttpResponse("Hello, world. Here is the ratings site.")
+        return ratings(request)
     else:
         return redirect('signup')
 
@@ -20,9 +25,19 @@ def signup(request):
             username = form.cleaned_data.get('username')
             user = authenticate(username=username, password=DUMMY_PASSWORD)
             login(request, user)
-            return redirect('index')
-        else:
-            print(form.cleaned_data)
+            response = redirect('index')
+            response.set_cookie(USERNAME_COOKIE, username)
+            return response
     else:
         form = RatingsUserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def ratings(request):
+    if request.method == 'POST':
+        form = RatingsForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = RatingsForm()
+    return render(request, 'ratings.html', {'form': form})

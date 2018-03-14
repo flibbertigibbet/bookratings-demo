@@ -5,9 +5,17 @@ from django.contrib.auth import (
 
 from django.contrib.auth.forms import UsernameField
 
+from .models import Book
+
 
 UserModel = get_user_model()
 DUMMY_PASSWORD = 'blank'
+
+
+class RatingsForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ('title', 'isbn')
 
 
 class RatingsUserCreationForm(forms.ModelForm):
