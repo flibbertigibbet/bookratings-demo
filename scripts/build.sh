@@ -24,6 +24,7 @@ then
             run --rm --entrypoint python \
             django manage.py migrate --noinput
 
+        # collectstatic
         docker-compose \
             run --rm --entrypoint python \
             django manage.py collectstatic --noinput
