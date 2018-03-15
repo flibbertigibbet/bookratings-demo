@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
-
+# python tests
 "${BASH_SOURCE%/*}/manage.sh" test
 
+# python linter
+flake8 .

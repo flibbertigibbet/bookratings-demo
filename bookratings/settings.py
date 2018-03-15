@@ -51,6 +51,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'ratings.middleware.CookieUserMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'ratings.backends.CookieUserBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = 'bookratings.urls'
