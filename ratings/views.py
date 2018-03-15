@@ -2,15 +2,10 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, render
 
 from .forms import DUMMY_PASSWORD, RatingsForm, RatingsUserCreationForm
-
-USERNAME_COOKIE = 'username'
+from .middleware import USERNAME_COOKIE
 
 
 def index(request):
-    if USERNAME_COOKIE in request.COOKIES:
-        username = request.COOKIES[USERNAME_COOKIE]
-        user = authenticate(username=username, password=DUMMY_PASSWORD)
-        login(request, user)
     if request.user.is_authenticated():
         return ratings(request)
     else:

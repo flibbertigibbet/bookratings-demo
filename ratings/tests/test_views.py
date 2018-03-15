@@ -28,7 +28,7 @@ class IndexViewTextCase(TestCase):
         self.client.cookies = SimpleCookie({USERNAME_COOKIE: user_name})
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context.user.username, user_name)
+        self.assertEqual(response.context['user'].username, user_name)
 
     def test_index_page_logs_in_user_from_cookie(self):
         """Should log in user from user name in cookie if user with that name already exists.
