@@ -7,7 +7,10 @@ from .middleware import USERNAME_COOKIE
 
 def index(request):
     if request.user.is_authenticated():
-        return ratings(request)
+        response = ratings(request)
+        if USERNAME_COOKIE not in request.COOKIES:
+            response.set_cookie(USERNAME_COOKIE, request.user.username)
+        return response
     else:
         return redirect('signup')
 
