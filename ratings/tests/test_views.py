@@ -5,6 +5,10 @@ class IndexViewTextCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_index_page_renders(self):
+    def test_index_page_redirects_when_no_cookie(self):
         response = self.client.get('')
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response, '/signup/', status_code=302, target_status_code=200)
+
+    def test_index_page_recognizes_cookie(self):
+        pass
