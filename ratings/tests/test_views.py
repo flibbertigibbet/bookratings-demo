@@ -12,6 +12,11 @@ UserModel = get_user_model()
 class IndexViewTextCase(TestCase):
     def setUp(self):
         self.client = Client()
+        user_name = 'existinguser'
+        # create a user
+        self.user = UserModel.objects.create(username=user_name)
+        self.user.set_password(DUMMY_PASSWORD)
+        self.user.save()
 
     def test_index_page_redirects_when_no_cookie(self):
         """Should redirect to sign-up page if not signed in and username cookie not set"""
@@ -35,12 +40,14 @@ class IndexViewTextCase(TestCase):
 
         Check user sign-in from name in cookie where user not signed in yet but does exist.
         """
-        user_name = 'existinguser'
-        # create user
-        user = UserModel.objects.create(username=user_name)
-        user.set_password(DUMMY_PASSWORD)
-        user.save()
-        self.client.cookies = SimpleCookie({USERNAME_COOKIE: user_name})
+        self.client.cookies = SimpleCookie({USERNAME_COOKIE: self.user.username})
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['user'].username, user_name)
+        self.assertEqual(response.context['user'].username, self.user.username)
+
+    def test_index_page_creates_cookie_for_user(self):
+        """If user is authenticated but the username cookie isn't present, set it."""
+        self.client.login(username=self.user.username, password=DUMMY_PASSWORD)
+        response = self.client.get('')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.cookies.get('username').value, self.user.username)
