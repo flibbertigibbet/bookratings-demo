@@ -1,4 +1,9 @@
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+UserModel = get_user_model()
 
 
 class Book(models.Model):
@@ -7,3 +12,20 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class UserRating(models.Model):
+    user = models.ForeignKey('UserModel', null=False, blank=False)
+    book = models.ForeignKey('Book', null=False, blank=False)
+    stars = models.PositiveSmallIntegerField(min_value=0, max_value=5)
+    rating = models.TextField()
+
+    def validate_unique(self, exclude=None, *args, **kwargs):
+        super(UserRating, self).validate_unique(*args, **kwargs)
+        ratings = UserRating.objects.filter(user=self.user)
+        if ratings.filter(book=self.book).exists():
+            raise ValidationError("User may only have one rating per book.")
+
+    def save(self, *args, **kwargs):
+        self.validate_unique()
+        super(UserRating, self).save(*args, **kwargs)
