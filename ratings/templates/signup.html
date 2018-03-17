@@ -7,9 +7,6 @@
     <p>
       {{ form.username.label_tag }}<br>
       {{ form.username }}
-      {% if form.username.help_text %}
-        <small style="color: grey">{{ form.username.help_text }}</small>
-      {% endif %}
       {% for error in form.username.errors %}
         <p style="color: red">{{ error }}</p>
       {% endfor %}

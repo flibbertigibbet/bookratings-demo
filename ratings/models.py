@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-
-
-UserModel = get_user_model()
 
 
 class Book(models.Model):
@@ -15,9 +12,9 @@ class Book(models.Model):
 
 
 class UserRating(models.Model):
-    user = models.ForeignKey('UserModel', null=False, blank=False)
+    user = models.ForeignKey(User, null=False, blank=False)
     book = models.ForeignKey('Book', null=False, blank=False)
-    stars = models.PositiveSmallIntegerField(min_value=0, max_value=5)
+    stars = models.PositiveSmallIntegerField()
     rating = models.TextField()
 
     def validate_unique(self, exclude=None, *args, **kwargs):

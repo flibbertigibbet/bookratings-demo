@@ -1,7 +1,5 @@
-from django.contrib.auth import backends, get_user_model
-
-
-UserModel = get_user_model()
+from django.contrib.auth import backends
+from django.contrib.auth.models import User
 
 
 class CookieUserBackend(backends.ModelBackend):
@@ -25,7 +23,7 @@ class CookieUserBackend(backends.ModelBackend):
         if not remote_user:
             return
         username = remote_user
-        user, created = UserModel._default_manager.get_or_create(**{
-            UserModel.USERNAME_FIELD: username
+        user, created = User._default_manager.get_or_create(**{
+            User.USERNAME_FIELD: username
         })
         return user

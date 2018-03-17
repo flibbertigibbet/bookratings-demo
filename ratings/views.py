@@ -1,13 +1,17 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import redirect, render
 
 from .forms import DUMMY_PASSWORD, RatingsForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
 
 
+def home(request):
+    return render(request, 'home.html')
+
+
 def index(request):
     if request.user.is_authenticated():
-        response = ratings(request)
+        response = home(request)
         if USERNAME_COOKIE not in request.COOKIES:
             response.set_cookie(USERNAME_COOKIE, request.user.username)
         return response
@@ -39,3 +43,11 @@ def ratings(request):
     else:
         form = RatingsForm()
     return render(request, 'ratings.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    response = redirect('index')
+    if USERNAME_COOKIE in request.COOKIES:
+        response.delete_cookie(USERNAME_COOKIE)
+    return response

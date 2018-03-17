@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from http.cookies import SimpleCookie
 
@@ -6,15 +6,12 @@ from ratings.forms import DUMMY_PASSWORD
 from ratings.views import USERNAME_COOKIE
 
 
-UserModel = get_user_model()
-
-
 class IndexViewTextCase(TestCase):
     def setUp(self):
         self.client = Client()
         user_name = 'existinguser'
         # create a user
-        self.user = UserModel.objects.create(username=user_name)
+        self.user = User.objects.create(username=user_name)
         self.user.set_password(DUMMY_PASSWORD)
         self.user.save()
 
