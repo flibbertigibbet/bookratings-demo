@@ -14,7 +14,7 @@ class Book(models.Model):
 
 
 class UserRating(models.Model):
-    user = models.ForeignKey(User, null=False, blank=False)
+    user = models.ForeignKey(User, null=True, blank=True)
     book = models.ForeignKey('Book', null=False, blank=False)
     stars = models.PositiveSmallIntegerField()
     rating = models.TextField()

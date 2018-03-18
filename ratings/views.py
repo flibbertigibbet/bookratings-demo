@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import redirect, render
 
-from .forms import DUMMY_PASSWORD, AddBookForm, RatingsForm, RatingsUserCreationForm
+from .forms import DUMMY_PASSWORD, AddBookForm, RateBookForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
 from .models import Book
 
@@ -41,14 +41,14 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def ratings(request):
+def rate_book(request):
     if request.method == 'POST':
-        form = RatingsForm(request.POST)
+        form = RateBookForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
     else:
-        form = RatingsForm()
-    return render(request, 'ratings.html', {'form': form})
+        form = RateBookForm(user=request.user)
+    return render(request, 'rate_book.html', {'form': form})
 
 
 def logout_view(request):

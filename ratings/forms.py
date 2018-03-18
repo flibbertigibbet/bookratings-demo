@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-
 from django.contrib.auth.forms import UsernameField
+from django.core.exceptions import ValidationError
 
 from .models import Book, UserRating
 
@@ -27,10 +27,28 @@ class AddBookForm(forms.ModelForm):
         return book
 
 
-class RatingsForm(forms.ModelForm):
+class RateBookForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(RateBookForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = UserRating
-        fields = ('user', 'book', 'stars', 'rating')
+        fields = ('book', 'stars', 'rating')
+
+    def clean(self):
+        try:
+            self.instance.validate_unique()
+        except Exception as ex:
+            raise ValidationError("You have already rated that book.")
+
+    def save(self, commit=True):
+        rating = super().save(commit=False)
+        rating.user = self.user
+        if commit:
+            rating.save()
+        return rating
 
 
 class RatingsUserCreationForm(forms.ModelForm):
