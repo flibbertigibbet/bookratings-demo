@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import redirect, render
 
-from .forms import DUMMY_PASSWORD, RatingsForm, RatingsUserCreationForm
+from .forms import DUMMY_PASSWORD, AddBookForm, RatingsForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
 
 
@@ -22,14 +22,18 @@ def index(request):
 def signup(request):
     if request.method == 'POST':
         form = RatingsUserCreationForm(request.POST)
+        username = form.data['username']
+        # create user if user does not exist
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            user = authenticate(username=username, password=DUMMY_PASSWORD)
+        user = authenticate(username=username, password=DUMMY_PASSWORD,
+                            backend='django.contrib.auth.backends.ModelBackend')
+        if user:
             login(request, user)
-            response = redirect('index')
-            response.set_cookie(USERNAME_COOKIE, username)
-            return response
+        response = redirect('index')
+        response.set_cookie(USERNAME_COOKIE, username)
+        return response
     else:
         form = RatingsUserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -51,3 +55,14 @@ def logout_view(request):
     if USERNAME_COOKIE in request.COOKIES:
         response.delete_cookie(USERNAME_COOKIE)
     return response
+
+
+def add_book(request):
+    if request.method == 'POST':
+        form = AddBookForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return home(request)
+    else:
+        form = AddBookForm(user=request.user)
+    return render(request, 'add-book.html', {'form': form})

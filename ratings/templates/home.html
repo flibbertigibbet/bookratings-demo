@@ -2,5 +2,7 @@
 
 {% block content %}
   <h2>Welcome, {{user.username}}!</h2>
-  <a href="{% url 'logout' %}"> Logout</a>
+
+  <h3><a href="{% url 'add-book' %}">Add a Book</a></h3>
+  <h3><a href="{% url 'logout' %}"> Logout</a></h3>
 {% endblock %}

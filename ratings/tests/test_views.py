@@ -1,15 +1,16 @@
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
+from django.urls import reverse
 from http.cookies import SimpleCookie
 
 from ratings.forms import DUMMY_PASSWORD
 from ratings.views import USERNAME_COOKIE
 
 
-class IndexViewTextCase(TestCase):
+class IndexViewTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        user_name = 'existinguser'
+        user_name = 'user'
         # create a user
         self.user = User.objects.create(username=user_name)
         self.user.set_password(DUMMY_PASSWORD)
@@ -19,7 +20,7 @@ class IndexViewTextCase(TestCase):
         """Should redirect to sign-up page if not signed in and username cookie not set"""
         response = self.client.get('')
         self.assertRedirects(
-            response, '/signup/', status_code=302, target_status_code=200)
+            response, reverse('signup'), status_code=302, target_status_code=200)
 
     def test_index_page_creates_user_from_cookie(self):
         """Should create user from user name in cookie if user doesn't already exist.
@@ -48,3 +49,22 @@ class IndexViewTextCase(TestCase):
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.cookies.get('username').value, self.user.username)
+
+
+class AddBookTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        user_name = 'user'
+        # create a user
+        self.user = User.objects.create(username=user_name)
+        self.user.set_password(DUMMY_PASSWORD)
+        self.user.save()
+        self.client.login(username=self.user.username, password=DUMMY_PASSWORD)
+
+    def test_book_created(self):
+        data = {
+            'title': 'title',
+            'isbn': '1111'
+        }
+        response = self.client.post(reverse('add-book'), data=data)
+        self.assertEqual(response.status_code, 200)

@@ -9,10 +9,22 @@ from .models import Book, UserRating
 DUMMY_PASSWORD = 'blank'
 
 
-class BookForm(forms.ModelForm):
+class AddBookForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(AddBookForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = Book
         fields = ('title', 'isbn')
+
+    def save(self, commit=True):
+        book = super().save(commit=False)
+        book.added_by = self.user
+        if commit:
+            book.save()
+        return book
 
 
 class RatingsForm(forms.ModelForm):
