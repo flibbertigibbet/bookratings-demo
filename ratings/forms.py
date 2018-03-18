@@ -1,19 +1,36 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 from django.contrib.auth.forms import UsernameField
 
-from .models import Book
+from .models import Book, UserRating
 
 
-UserModel = get_user_model()
 DUMMY_PASSWORD = 'blank'
+
+
+class AddBookForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(AddBookForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Book
+        fields = ('title', 'isbn')
+
+    def save(self, commit=True):
+        book = super().save(commit=False)
+        book.added_by = self.user
+        if commit:
+            book.save()
+        return book
 
 
 class RatingsForm(forms.ModelForm):
     class Meta:
-        model = Book
-        fields = ('title', 'isbn')
+        model = UserRating
+        fields = ('user', 'book', 'stars', 'rating')
 
 
 class RatingsUserCreationForm(forms.ModelForm):
@@ -24,9 +41,9 @@ class RatingsUserCreationForm(forms.ModelForm):
     """
 
     class Meta:
-        model = UserModel
-        fields = (UserModel.USERNAME_FIELD,)
-        field_classes = {UserModel.USERNAME_FIELD: UsernameField}
+        model = User
+        fields = (User.USERNAME_FIELD,)
+        field_classes = {User.USERNAME_FIELD: UsernameField}
 
     def save(self, commit=True):
         user = super().save(commit=False)

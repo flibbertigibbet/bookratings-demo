@@ -1,13 +1,17 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import redirect, render
 
-from .forms import DUMMY_PASSWORD, RatingsForm, RatingsUserCreationForm
+from .forms import DUMMY_PASSWORD, AddBookForm, RatingsForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
+
+
+def home(request):
+    return render(request, 'home.html')
 
 
 def index(request):
     if request.user.is_authenticated():
-        response = ratings(request)
+        response = home(request)
         if USERNAME_COOKIE not in request.COOKIES:
             response.set_cookie(USERNAME_COOKIE, request.user.username)
         return response
@@ -18,14 +22,18 @@ def index(request):
 def signup(request):
     if request.method == 'POST':
         form = RatingsUserCreationForm(request.POST)
+        username = form.data['username']
+        # create user if user does not exist
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            user = authenticate(username=username, password=DUMMY_PASSWORD)
+        user = authenticate(username=username, password=DUMMY_PASSWORD,
+                            backend='django.contrib.auth.backends.ModelBackend')
+        if user:
             login(request, user)
-            response = redirect('index')
-            response.set_cookie(USERNAME_COOKIE, username)
-            return response
+        response = redirect('index')
+        response.set_cookie(USERNAME_COOKIE, username)
+        return response
     else:
         form = RatingsUserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -39,3 +47,22 @@ def ratings(request):
     else:
         form = RatingsForm()
     return render(request, 'ratings.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    response = redirect('index')
+    if USERNAME_COOKIE in request.COOKIES:
+        response.delete_cookie(USERNAME_COOKIE)
+    return response
+
+
+def add_book(request):
+    if request.method == 'POST':
+        form = AddBookForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return home(request)
+    else:
+        form = AddBookForm(user=request.user)
+    return render(request, 'add-book.html', {'form': form})

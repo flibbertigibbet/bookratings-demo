@@ -17,10 +17,6 @@ class CookieUserMiddleware(MiddlewareMixin):
     persist the user in the session.
     """
 
-    # Name of request header to grab username from.  This will be the key as
-    # used in the request.META dictionary, i.e. the normalization of headers to
-    # all uppercase and the addition of "HTTP_" prefix apply.
-
     def process_request(self, request):
         # AuthenticationMiddleware is required so that request.user exists.
         if not hasattr(request, 'user'):
