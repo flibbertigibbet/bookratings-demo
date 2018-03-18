@@ -5,4 +5,11 @@
 
   <h3><a href="{% url 'add-book' %}">Add a Book</a></h3>
   <h3><a href="{% url 'logout' %}"> Logout</a></h3>
+
+  {% if user_added_books %}
+    <h3>Books you added</h3>
+  {% endif %}
+  {% for book in user_added_books %}
+    <p>{{ book.title }}</p>
+  {% endfor %}
 {% endblock %}

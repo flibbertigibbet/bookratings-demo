@@ -3,10 +3,12 @@ from django.shortcuts import redirect, render
 
 from .forms import DUMMY_PASSWORD, AddBookForm, RatingsForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
+from .models import Book
 
 
 def home(request):
-    return render(request, 'home.html')
+    user_books = Book.objects.filter(added_by=request.user)
+    return render(request, 'home.html', {'user_added_books': user_books})
 
 
 def index(request):
@@ -62,7 +64,7 @@ def add_book(request):
         form = AddBookForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return home(request)
+            return redirect('index')
     else:
         form = AddBookForm(user=request.user)
     return render(request, 'add-book.html', {'form': form})
