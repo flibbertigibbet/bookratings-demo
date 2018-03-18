@@ -68,3 +68,17 @@ class AddBookTestCase(TestCase):
         }
         response = self.client.post(reverse('add-book'), data=data)
         self.assertEqual(response.status_code, 200)
+
+    def test_book_uniqueness(self):
+        """Attempting to add a book with the same ISBN but different title should fail."""
+        data = {
+            'title': 'title',
+            'isbn': '1111'
+        }
+        response = self.client.post(reverse('add-book'), data=data)
+        self.assertEqual(response.status_code, 200)
+
+        data['title'] = 'sequel'
+        response = self.client.post(reverse('add-book'), data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'isbn', 'Book with this Isbn already exists.')
