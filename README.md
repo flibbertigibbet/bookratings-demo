@@ -2,6 +2,11 @@
 Small Django site with PostgreSQL and Docker
 
 
+## Build status
+
+[![Build Status](https://travis-ci.org/flibbertigibbet/bookratings-demo.svg?branch=develop)](https://travis-ci.org/flibbertigibbet/bookratings-demo)
+
+
 ## Requirements
 
  - docker
