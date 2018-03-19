@@ -11,8 +11,7 @@ Small Django site with PostgreSQL and Docker
 ## Build and run locally
 
  - - `./scripts/build.sh` to build containers, run migrations, and `collectstatic`
- - `docker-compose up`
- - Runs at http://localhost:8000/
+ - `./scripts/server.sh` to run at http://localhost:822/
  - Tests run with `./scripts/test.sh` with the containers up
  - `./scripts/manage.sh` to run Django management commands
  - `docker-compose exec django /bin/sh` for shell
@@ -20,5 +19,5 @@ Small Django site with PostgreSQL and Docker
 
  ## Ports
 
-  - `8000`: web server
+  - `8222`: web server
   - `5432`: database
