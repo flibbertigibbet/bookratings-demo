@@ -64,10 +64,11 @@ class AddBookTestCase(TestCase):
     def test_book_created(self):
         data = {
             'title': 'title',
-            'isbn': '1111'
+            'isbn': '0000'
         }
         response = self.client.post(reverse('add-book'), data=data)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response, reverse('index'), status_code=302, target_status_code=200)
 
     def test_book_uniqueness(self):
         """Attempting to add a book with the same ISBN but different title should fail."""
@@ -76,9 +77,10 @@ class AddBookTestCase(TestCase):
             'isbn': '1111'
         }
         response = self.client.post(reverse('add-book'), data=data)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response, reverse('index'), status_code=302, target_status_code=200)
 
         data['title'] = 'sequel'
         response = self.client.post(reverse('add-book'), data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'isbn', 'Book with this Isbn already exists.')
+        self.assertFormError(response, 'form', 'isbn', 'Book with this ISBN already exists.')

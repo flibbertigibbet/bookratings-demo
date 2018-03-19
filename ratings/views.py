@@ -3,12 +3,15 @@ from django.shortcuts import redirect, render
 
 from .forms import DUMMY_PASSWORD, AddBookForm, RateBookForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
-from .models import Book
+from .models import Book, BookRating
 
 
 def home(request):
     user_books = Book.objects.filter(added_by=request.user)
-    return render(request, 'home.html', {'user_added_books': user_books})
+    user_ratings = BookRating.objects.filter(user=request.user)
+    return render(request, 'home.html', {
+                  'user_added_books': user_books,
+                  'user_added_ratings': user_ratings})
 
 
 def index(request):

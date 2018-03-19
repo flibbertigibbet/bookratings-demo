@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UsernameField
 from django.core.exceptions import ValidationError
 
-from .models import Book, UserRating
+from .models import Book, BookRating
 
 
 DUMMY_PASSWORD = 'blank'
@@ -34,7 +34,7 @@ class RateBookForm(forms.ModelForm):
         super(RateBookForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = UserRating
+        model = BookRating
         fields = ('book', 'stars', 'rating')
 
     def clean(self):

@@ -13,18 +13,18 @@ class Book(models.Model):
         return self.title
 
 
-class UserRating(models.Model):
+class BookRating(models.Model):
     user = models.ForeignKey(User, null=True, blank=True)
     book = models.ForeignKey('Book', null=False, blank=False)
     stars = models.PositiveSmallIntegerField()
     rating = models.TextField()
 
     def validate_unique(self, exclude=None, *args, **kwargs):
-        super(UserRating, self).validate_unique(*args, **kwargs)
-        ratings = UserRating.objects.filter(user=self.user)
+        super(BookRating, self).validate_unique(*args, **kwargs)
+        ratings = BookRating.objects.filter(user=self.user)
         if ratings.filter(book=self.book).exists():
             raise ValidationError("User may only have one rating per book.")
 
     def save(self, *args, **kwargs):
         self.validate_unique()
-        super(UserRating, self).save(*args, **kwargs)
+        super(BookRating, self).save(*args, **kwargs)
