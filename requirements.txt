@@ -1,7 +1,6 @@
 Django==1.11
 django-extensions
 psycopg2-binary
-factory-boy
 flake8
 ipdb
 ipython
