@@ -4,6 +4,7 @@ from django.urls import reverse
 from http.cookies import SimpleCookie
 
 from ratings.forms import DUMMY_PASSWORD
+from ratings.models import Book, BookRating
 from ratings.views import USERNAME_COOKIE
 
 
@@ -84,3 +85,27 @@ class AddBookTestCase(TestCase):
         response = self.client.post(reverse('add-book'), data=data)
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, 'form', 'isbn', 'Book with this ISBN already exists.')
+
+
+class ReviewBookTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        user_name = 'user'
+        # create a user
+        self.user = User.objects.create(username=user_name)
+        self.user.set_password(DUMMY_PASSWORD)
+        self.user.save()
+        self.client.login(username=self.user.username, password=DUMMY_PASSWORD)
+        # create a book
+        self.book = Book.objects.create(title='title', isbn='12345', added_by=self.user)
+
+    def test_review_created(self):
+        data = {
+            'book': self.book.id,
+            'stars': 3,
+            'rating': 'some text'
+        }
+        response = self.client.post(reverse('review-book'), data=data)
+        self.assertRedirects(
+            response, reverse('index'), status_code=302, target_status_code=200)
+        self.assertEqual(BookRating.objects.all().count(), 1)

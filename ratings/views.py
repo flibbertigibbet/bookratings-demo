@@ -49,6 +49,7 @@ def rate_book(request):
         form = RateBookForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
+            return redirect('index')
     else:
         form = RateBookForm(user=request.user)
     return render(request, 'rate_book.html', {'form': form})

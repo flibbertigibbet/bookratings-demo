@@ -29,6 +29,8 @@ class AddBookForm(forms.ModelForm):
 
 class RateBookForm(forms.ModelForm):
 
+    stars = forms.ChoiceField(widget=forms.RadioSelect, choices=((x, x) for x in range(1, 6)))
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(RateBookForm, self).__init__(*args, **kwargs)
