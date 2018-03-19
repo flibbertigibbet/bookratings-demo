@@ -9,9 +9,11 @@ from .models import Book, BookRating
 def home(request):
     user_books = Book.objects.filter(added_by=request.user)
     user_ratings = BookRating.objects.filter(user=request.user)
+    others_ratings = BookRating.objects.filter(book__in=user_books).exclude(user=request.user)
     return render(request, 'home.html', {
                   'user_added_books': user_books,
-                  'user_added_ratings': user_ratings})
+                  'user_added_ratings': user_ratings,
+                  'others_ratings': others_ratings})
 
 
 def index(request):

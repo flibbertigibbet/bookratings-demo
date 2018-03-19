@@ -24,4 +24,13 @@
     <li>{{ review.book.title }}: {{ review.stars }} stars: {{ review.rating }}</li>
   {% endfor %}
   </ul>
+
+  {% if others_ratings %}
+    <h3>Reviews others made of books you added</h3>
+  {% endif %}
+  <ul>
+  {% for review in others_ratings %}
+    <li>Review of {{ review.book.title }} from {{ review.user.username }}: {{ review.stars }} stars: {{ review.rating }}</li>
+  {% endfor %}
+  </ul>
 {% endblock %}
