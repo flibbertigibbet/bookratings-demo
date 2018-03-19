@@ -1,14 +1,17 @@
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import redirect, render
 
-from .forms import DUMMY_PASSWORD, AddBookForm, RatingsForm, RatingsUserCreationForm
+from .forms import DUMMY_PASSWORD, AddBookForm, RateBookForm, RatingsUserCreationForm
 from .middleware import USERNAME_COOKIE
-from .models import Book
+from .models import Book, BookRating
 
 
 def home(request):
     user_books = Book.objects.filter(added_by=request.user)
-    return render(request, 'home.html', {'user_added_books': user_books})
+    user_ratings = BookRating.objects.filter(user=request.user)
+    return render(request, 'home.html', {
+                  'user_added_books': user_books,
+                  'user_added_ratings': user_ratings})
 
 
 def index(request):
@@ -41,14 +44,15 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def ratings(request):
+def rate_book(request):
     if request.method == 'POST':
-        form = RatingsForm(request.POST)
+        form = RateBookForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
+            return redirect('index')
     else:
-        form = RatingsForm()
-    return render(request, 'ratings.html', {'form': form})
+        form = RateBookForm(user=request.user)
+    return render(request, 'rate_book.html', {'form': form})
 
 
 def logout_view(request):
