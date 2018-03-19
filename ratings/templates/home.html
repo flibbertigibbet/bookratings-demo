@@ -10,7 +10,18 @@
   {% if user_added_books %}
     <h3>Books you added</h3>
   {% endif %}
+  <ul>
   {% for book in user_added_books %}
-    <p>{{ book.title }}</p>
+    <li>{{ book.title }}</li>
   {% endfor %}
+  </ul>
+
+  {% if user_added_ratings %}
+    <h3>Reviews you added</h3>
+  {% endif %}
+  <ul>
+  {% for review in user_added_ratings %}
+    <li>{{ review.book.title }}: {{ review.stars }} stars: {{ review.rating }}</li>
+  {% endfor %}
+  </ul>
 {% endblock %}

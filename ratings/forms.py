@@ -38,14 +38,12 @@ class RateBookForm(forms.ModelForm):
         fields = ('book', 'stars', 'rating')
 
     def clean(self):
-        try:
-            self.instance.validate_unique()
-        except Exception as ex:
-            raise ValidationError("You have already rated that book.")
+        self.instance.user = self.user
+        return super(RateBookForm, self).clean()
 
     def save(self, commit=True):
+        self.instance.user = self.user
         rating = super().save(commit=False)
-        rating.user = self.user
         if commit:
             rating.save()
         return rating
